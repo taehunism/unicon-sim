@@ -16,30 +16,21 @@ class Unicon_CV():
     def camera_callback(self,data):
         try:
             # ROS 이미지 메시지를 OpenCV 이미지로 변환
-            cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
-            
-            # 여기에 이미지 처리 및 차선 인식 알고리즘을 적용
-
-            #src_points = np.array([[0,0],[640,0],[640,480],[0,480]], dtype=np.float32)
-            #dst_points = np.array([[320,0],[320,480],[960,480],[960,0]], dtype=np.float32)
-            #M = cv2.getPerspectiveTransform(src_points, dst_points)
+            cv_image_raw = self.bridge.imgmsg_to_cv2(data, "bgr8")
+            cv_image = cv_image_raw[0:640][240:480] #ROI
 
             gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
             blur = cv2.GaussianBlur(gray,(5,5),0) #이미지,커널사이즈,표준편차
 
-            hsv = cv2.cvtColor(cv_image, cv2.COLOR_BGR2HSV)
+            hsv = cv2.cvtColor(cv_image_raw, cv2.COLOR_BGR2HSV)
             mask = cv2.inRange(hsv, (0,0,180), (255,255,255))
+            edge = cv2.Canny(blur,100,200,5)
 
-            edge = cv2.Canny(blur,150,200,5)
-            edge2 = cv2.Canny(mask, 150,200,5)
+            
+            cv2.imshow('filter', mask)
+            cv2.imshow('Video', cv_image)
+            cv2.imshow('Canny', edge)
 
-            #bev = cv2.warpPerspective(frame, M, (1280, 720))
-            #cv2.imshow('filter', mask)
-                    
-            cv2.imshow('Video', cv_image) #Frame이라는 창 이름, frame을 보여줌
-            cv2.imshow('Canny', edge) #Frame이라는 창 이름, frame을 보여줌qqqqq
-            #cv2.imshow('BEV', bev)
-            #cv2.imshow('Canny2', edge2)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 rospy.signal_shutdown("User exit with 'q' key")  # Shutdown ROS node
