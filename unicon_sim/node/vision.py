@@ -34,8 +34,10 @@ class Unicon_CV():
 
             xx = 20  
             image = cv_image_raw.copy()  
-            init_velue=[0,0]
-            matrix_zeros = [[init_velue[:] for j in range(32)] for i in range(10)]
+            #init_velue=[0,0]
+            #matrix_zeros = [[init_velue[:] for j in range(32)] for i in range(10)]
+            matrix_zeros = np.zeros((10, 32, 2), dtype=int)
+
             for i in range(10): # line 
                 yy = 460 - (i + 1) * 9  # 9간격으로 위로 이동
                 for j in range(32):  # 최대로 가로 개수를 늘림
@@ -45,19 +47,27 @@ class Unicon_CV():
 
                     if white_pixels > 30:  
                         image[yy:yy+4, j*20:(j+1)*20] = [0, 0, 255]  # 
-                        matrix_zeros[i][j]=[yy+2,(j+1)*10]
+                        matrix_zeros[i][j]=[(j+1)*10,yy+2]
                         
                     elif yellow_pixels > 80: 
                         image[yy:yy+4, j*20:(j+1)*20] = [255, 0, 0]  
-                        matrix_zeros[i][j]=[yy+2,(j+1)*10]
+                        matrix_zeros[i][j]=[(j+1)*10,yy+2]
+
+            non_zero_values = matrix_zeros[np.all(matrix_zeros != [0, 0], axis=-1)]
+            print(non_zero_values)
+            
+            #non_zero_list = non_zero_values.tolist()
+            #print(non_zero_list)
             
             #print(matrix_zeros)
-            mask = cv2.inRange(hsv, (0, 0, 180), (255, 255, 255))
-            edge = cv2.Canny(blur, 100, 200, 5)
-            cv2.imshow('yellow',mask_yellow)
-            cv2.imshow('white', mask_white)
-            cv2.imshow('Video', image)
+            #mask = cv2.inRange(hsv, (0, 0, 180), (255, 255, 255))
+            #edge = cv2.Canny(blur, 100, 200, 5)
+            
+            #cv2.imshow('yellow',mask_yellow)
+            #cv2.imshow('white', mask_white)
             #cv2.imshow('Canny', edge)
+            cv2.imshow('Video', image)
+
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 rospy.signal_shutdown("User exit with 'q' key")  
