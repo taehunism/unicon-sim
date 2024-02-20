@@ -3,6 +3,7 @@ import numpy as np
 import cv2
 from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import Image
+from birdeyeview import birdeyeview
 
 class Unicon_CV():
     def __init__(self):
@@ -33,7 +34,8 @@ class Unicon_CV():
             img = cv2.bitwise_or(mask_white, mask_yellow)
 
             xx = 20  
-            image = cv_image_raw.copy()  
+            image = cv_image_raw.copy()
+            
             #init_velue=[0,0]
             #matrix_zeros = [[init_velue[:] for j in range(32)] for i in range(10)]
             matrix_zeros = np.zeros((10, 32, 2), dtype=int)
@@ -60,12 +62,7 @@ class Unicon_CV():
             #print(non_zero_list)
             
             #print(matrix_zeros)
-            #mask = cv2.inRange(hsv, (0, 0, 180), (255, 255, 255))
-            #edge = cv2.Canny(blur, 100, 200, 5)
-            
-            #cv2.imshow('yellow',mask_yellow)
-            #cv2.imshow('white', mask_white)
-            #cv2.imshow('Canny', edge)
+
             cv2.imshow('Video', image)
 
 
