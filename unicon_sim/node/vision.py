@@ -3,15 +3,18 @@ import numpy as np
 import cv2
 from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import Image
-from birdeyeview import birdeyeview
+#from birdeyeview import BEV
+from perspectiveTransform import bev
 
 class Unicon_CV():
     def __init__(self):
         self.camera_sub = rospy.Subscriber("/camera/rgb/image_raw", Image, self.camera_callback)
         self.bridge = CvBridge()
 
+
     def camera_callback(self, data):
         try:
+
             cv_image_raw = self.bridge.imgmsg_to_cv2(data, "bgr8")
             cv_image = cv_image_raw[0:640][240:480]  
 
@@ -31,13 +34,8 @@ class Unicon_CV():
             mask_white = cv2.inRange(hsv, lower_white, upper_white)
             mask_yellow = cv2.inRange(hsv, lower_yellow, upper_yellow)
 
-            img = cv2.bitwise_or(mask_white, mask_yellow)
-
-            xx = 20  
             image = cv_image_raw.copy()
             
-            #init_velue=[0,0]
-            #matrix_zeros = [[init_velue[:] for j in range(32)] for i in range(10)]
             matrix_zeros = np.zeros((10, 32, 2), dtype=int)
 
             for i in range(10): # line 
@@ -63,8 +61,11 @@ class Unicon_CV():
             
             #print(matrix_zeros)
 
-            cv2.imshow('Video', image)
+            #cv2.imshow('Video', image)
+            bev_tf = bev(image)
+            cv2.imshow('BEV', bev_tf)
 
+            cv2.waitKey(0)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 rospy.signal_shutdown("User exit with 'q' key")  
