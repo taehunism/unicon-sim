@@ -31,16 +31,16 @@ def bev(image):
     #cv2.imshow('transformed', transformed)
 
 
-    # if POINTS_CHECK != True:
-    #     cv2.setMouseCallback('transformed',mouse_events2.onMouse, transformed)
-    #     cv2.waitKey(0)
-    #     line_coord = np.float32(mouse_events2.points)
-    #     One = np.squeeze(INV_M @ np.expand_dims(np.append(line_coord[0], 1), axis=1))
-    #     Two = np.squeeze(INV_M @ np.expand_dims(np.append(line_coord[1], 1), axis=1))
-    #     One = One[:2] / One[2]
-    #     Two = Two[:2] / Two[2]
+    if POINTS_CHECK != True:
+        cv2.setMouseCallback('transformed',mouse_events2.onMouse, transformed)
+        cv2.waitKey(0)
+        line_coord = np.float32(mouse_events2.points)
+        One = np.squeeze(INV_M @ np.expand_dims(np.append(line_coord[0], 1), axis=1))
+        Two = np.squeeze(INV_M @ np.expand_dims(np.append(line_coord[1], 1), axis=1))
+        One = One[:2] / One[2]
+        Two = Two[:2] / Two[2]
 
-    #     POINTS_CHECK = True
+        POINTS_CHECK = True
 
     cv2.line(transformed, line_coord[0].astype(int), line_coord[1].astype(int), (255,0,0),2,1)
     cv2.line(frame, One.astype(int), Two.astype(int), (255,0,0),2,1)
